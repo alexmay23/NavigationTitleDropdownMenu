@@ -26,7 +26,7 @@ s.source_files = "Sources/**/*.{swift}"
 
 s.resource_bundles = {
 'UI' => [
-'BluesnapSDK/**/*.xcassets',
+'Sources/**/*.xcassets',
 ]
 }
 
