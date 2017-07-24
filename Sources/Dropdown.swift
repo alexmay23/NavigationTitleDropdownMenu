@@ -165,11 +165,26 @@ public class DropdownMenu:NSObject
     
     var closedConstraint: NSLayoutConstraint!
     
-    let arrowImageView = UIImageView(image: UIImage(named: "Arrow", in: bundle, compatibleWith: nil));
+    let image = UIImage(named: "Arrow", in: bundle, compatibleWith: nil);
+    
+    let arrowImageView: UIImageView!
     
     var openedConstraint: NSLayoutConstraint!
     
-    public var separatorColor: UIColor = .black;
+    var tintColor: UIColor!{
+        didSet{
+            self.selectButton.setTitleColor(tintColor, for: .normal);
+            self.arrowImageView.image = image!.withRenderingMode(.alwaysTemplate);
+            self.arrowImageView.tintColor = self.tintColor;
+        }
+    }
+    
+    public var separatorColor: UIColor!{
+        didSet
+        {
+            self.dropdownTableView.separatorColor = separatorColor;
+        }
+    }
     
     var backgroundViewConstraints: [NSLayoutConstraint]!
     
@@ -222,6 +237,7 @@ public class DropdownMenu:NSObject
         self.selectButton = UIButton(frame: CGRect.zero)
         self.selectButton.setTitle(self.dropdownMenuDatasource.selectedItem.description, for: UIControlState());
         self.selectButton.translatesAutoresizingMaskIntoConstraints = false;
+        self.arrowImageView = UIImageView();
         self.arrowImageView.translatesAutoresizingMaskIntoConstraints = false;
         
         self.containerView = UIView(frame: CGRect(x: 0.0, y: 0.0, width: 150.0, height: 44.0))
