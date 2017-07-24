@@ -142,7 +142,6 @@ class BackgroundView: UIView
 public protocol DropdownMenuDelegate: class {
     
     func dropdownMenu(_ menu:DropdownMenu, didSelectItem item:DropdownMenuItem, atIndex index: Int)
-    func dropdownMenu(_ menu:DropdownMenu, configureContainerView view: UIView);
 }
 
 public class DropdownMenu:NSObject
@@ -234,9 +233,7 @@ public class DropdownMenu:NSObject
         self.containerView.addConstraint(NSLayoutConstraint(item: self.arrowImageView, attribute: .centerY, relatedBy: .equal, toItem: containerView, attribute: .centerY, multiplier: 1.0, constant: 0.0))
         
         self.selectButton.hitEdgeInsets = UIEdgeInsets(top: -10.0, left: -50.0, bottom: -10.0, right: -50.0)
-        
-        self.delegate!.dropdownMenu(self, configureContainerView: self.containerView);
-        
+    
         self.selectButton.addTarget(self, action: #selector(self.selectButtonAction(_:)), for: .touchUpInside);
         
         self.backgroundView = BackgroundView()
