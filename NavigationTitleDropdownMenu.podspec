@@ -14,7 +14,7 @@ s.name = "NavigationTitleDropdownMenu"
 s.summary = "NavigationTitleDropdownMenu just menu"
 s.requires_arc = true
 
-s.version = '0.0.3'
+s.version = '0.0.4'
 s.license = { :type => "MIT", :file => "LICENSE" }
 s.author = { "Alex Moiseenko" => "alexmoiseenko@me.com" }
 s.homepage = "https://github.com/alexmay23/NavigationTitleDropdownMenu"

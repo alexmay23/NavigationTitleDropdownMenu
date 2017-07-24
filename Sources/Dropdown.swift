@@ -189,7 +189,7 @@ public class DropdownMenu:NSObject
     }
     
     @discardableResult
-    func _setItem(at index:Int)->DropdownMenuItem
+    public func setItemInMenu(at index:Int)->DropdownMenuItem
     {
         self.dropdownMenuDatasource.selectedIndex = index;
         let dropdownMenuItem = self.dropdownMenuDatasource.selectedItem;
@@ -200,9 +200,9 @@ public class DropdownMenu:NSObject
         return dropdownMenuItem
     }
     
-    func setItemAtIndex(_ index:Int)
+    public func setItemAtIndex(_ index:Int)
     {
-        let dropdownMenuItem = _setItem(at: index);
+        let dropdownMenuItem = setItemInMenu(at: index);
         self.hideMenu();
         delegate?.dropdownMenu(self, didSelectItem: dropdownMenuItem, atIndex: index);
     }
