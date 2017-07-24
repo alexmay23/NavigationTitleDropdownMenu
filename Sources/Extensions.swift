@@ -12,7 +12,7 @@ import ObjectiveC
 
 
 
-let bundle = Bundle(url: Bundle(for: DropdownMenu.self).url(forResource: "UI", withExtension: "bundle"));
+let bundle = Bundle(url: Bundle(for: DropdownMenu.self).url(forResource: "UI", withExtension: "bundle")!)!;
 
 extension UIButton
 {
