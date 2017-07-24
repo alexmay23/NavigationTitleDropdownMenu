@@ -14,7 +14,7 @@ s.name = "NavigationTitleDropdownMenu"
 s.summary = "NavigationTitleDropdownMenu just menu"
 s.requires_arc = true
 
-s.version = '0.0.1'
+s.version = '0.0.2'
 s.license = { :type => "MIT", :file => "LICENSE" }
 s.author = { "Alex Moiseenko" => "alexmoiseenko@me.com" }
 s.homepage = "https://github.com/alexmay23/NavigationTitleDropdownMenu"
@@ -24,5 +24,10 @@ s.framework = "UIKit"
 
 s.source_files = "Sources/**/*.{swift}"
 
+s.resource_bundles = {
+'UI' => [
+'BluesnapSDK/**/*.xcassets',
+]
+}
 
 end

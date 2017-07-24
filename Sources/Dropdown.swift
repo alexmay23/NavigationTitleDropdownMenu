@@ -12,6 +12,7 @@ import UIKit
 
 class DropdownMenuTableViewCell:UITableViewCell
 {
+    
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
     }
@@ -19,12 +20,33 @@ class DropdownMenuTableViewCell:UITableViewCell
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder);
     }
+    
+   
 }
 
-public protocol DropdownMenuItem:CustomStringConvertible {
+
+
+public protocol DropdownMenuItem:CustomStringConvertible
+{
+    var font: UIFont { get }
+    var titleColor: UIColor { get }
+}
+
+
+extension DropdownMenuItem
+{
+
+    var font: UIFont
+    {
+        return UIFont.boldSystemFont(ofSize: 15.0);
+    }
+    
+    var titleColor: UIColor
+    {
+        return UIColor.black;
+    }
     
 }
-
 
 
 class DropdownMenuTableViewDataSource: NSObject, UITableViewDataSource, UITableViewDelegate
@@ -51,7 +73,10 @@ class DropdownMenuTableViewDataSource: NSObject, UITableViewDataSource, UITableV
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "DropdownMenuTableViewCell", for: indexPath) as!DropdownMenuTableViewCell
-        cell.textLabel?.text = items[(indexPath as NSIndexPath).row].description;
+        let item = items[(indexPath as NSIndexPath).row]
+        cell.textLabel?.text = item.description;
+        cell.textLabel?.textColor = item.titleColor;
+        cell.textLabel?.font = item.font;
         return cell;
     }
     
@@ -113,9 +138,11 @@ class BackgroundView: UIView
 }
 
 
+
 public protocol DropdownMenuDelegate: class {
     
     func dropdownMenu(_ menu:DropdownMenu, didSelectItem item:DropdownMenuItem, atIndex index: Int)
+    func dropdownMenu(_ menu:DropdownMenu, configureContainerView view: UIView);
 }
 
 public class DropdownMenu:NSObject
@@ -139,9 +166,11 @@ public class DropdownMenu:NSObject
     
     var closedConstraint: NSLayoutConstraint!
     
-    let arrowImageView = UIImageView(image: UIImage(named: "Arrow"));
+    let arrowImageView = UIImageView(image: UIImage(named: "Arrow", in: bundle, compatibleWith: nil));
     
     var openedConstraint: NSLayoutConstraint!
+    
+    var separatorColor: UIColor = .black;
     
     var backgroundViewConstraints: [NSLayoutConstraint]!
     
@@ -153,7 +182,6 @@ public class DropdownMenu:NSObject
     
     public init(inViewController viewController:UIViewController, withItems items:[DropdownMenuItem], andSelectedIndex selectedIndex:Int = 0)
     {
-        assert(viewController.navigationController != nil, "must be navigation Controller")
         self.viewController = viewController;
         self.dropdownMenuDatasource = DropdownMenuTableViewDataSource(items: items, selectedIndex: selectedIndex)
         super.init();
@@ -190,6 +218,7 @@ public class DropdownMenu:NSObject
         self.dropdownTableView = DropdownMenuTableView()
         self.dropdownTableView.delegate = self.dropdownMenuDatasource;
         self.dropdownTableView.dataSource = self.dropdownMenuDatasource;
+        self.dropdownTableView.separatorColor = self.separatorColor;
         
         self.selectButton = UIButton(frame: CGRect.zero)
         self.selectButton.setTitle(self.dropdownMenuDatasource.selectedItem.description, for: UIControlState());
@@ -206,7 +235,7 @@ public class DropdownMenu:NSObject
         
         self.selectButton.hitEdgeInsets = UIEdgeInsets(top: -10.0, left: -50.0, bottom: -10.0, right: -50.0)
         
-        self.viewController.navigationItem.titleView = containerView;
+        self.delegate!.dropdownMenu(self, configureContainerView: self.containerView);
         
         self.selectButton.addTarget(self, action: #selector(self.selectButtonAction(_:)), for: .touchUpInside);
         
