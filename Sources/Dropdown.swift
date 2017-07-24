@@ -162,7 +162,7 @@ public class DropdownMenu:NSObject
     
     fileprivate var dropdownMenuDatasource: DropdownMenuTableViewDataSource
     
-    var animationDuration = 0.33;
+    public var animationDuration = 0.33;
     
     var closedConstraint: NSLayoutConstraint!
     
@@ -170,7 +170,7 @@ public class DropdownMenu:NSObject
     
     var openedConstraint: NSLayoutConstraint!
     
-    var separatorColor: UIColor = .black;
+    public var separatorColor: UIColor = .black;
     
     var backgroundViewConstraints: [NSLayoutConstraint]!
     
@@ -178,7 +178,7 @@ public class DropdownMenu:NSObject
     
     var selectButton:UIButton!
     
-    var containerView:UIView!
+    public var containerView:UIView!
     
     public init(inViewController viewController:UIViewController, withItems items:[DropdownMenuItem], andSelectedIndex selectedIndex:Int = 0)
     {
