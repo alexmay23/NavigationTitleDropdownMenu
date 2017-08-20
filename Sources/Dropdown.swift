@@ -52,9 +52,9 @@ extension DropdownMenuItem
 class DropdownMenuTableViewDataSource: NSObject, UITableViewDataSource, UITableViewDelegate
 {
     
-    let items: [DropdownMenuItem]
+    var items: [DropdownMenuItem] = [];
     
-    var selectedIndex:Int
+    var selectedIndex:Int = 0;
     
     var callback:((Int)->Void)!
     
@@ -63,13 +63,6 @@ class DropdownMenuTableViewDataSource: NSObject, UITableViewDataSource, UITableV
     }
     
     var cellHeight:CGFloat = 44.0
-    
-    init(items:[DropdownMenuItem], selectedIndex:Int = 0)
-    {
-        self.items = items;
-        self.selectedIndex = selectedIndex;
-        super.init();
-    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "DropdownMenuTableViewCell", for: indexPath) as!DropdownMenuTableViewCell
@@ -159,7 +152,7 @@ public class DropdownMenu:NSObject
         return self.dropdownMenuDatasource.selectedIndex
     }
     
-    fileprivate var dropdownMenuDatasource: DropdownMenuTableViewDataSource
+    fileprivate var dropdownMenuDatasource = DropdownMenuTableViewDataSource()
     
     public var animationDuration = 0.33;
     
@@ -167,11 +160,11 @@ public class DropdownMenu:NSObject
     
     let image = UIImage(named: "Arrow", in: bundle, compatibleWith: nil);
     
-    let arrowImageView: UIImageView!
+    var arrowImageView: UIImageView!
     
     var openedConstraint: NSLayoutConstraint!
     
-    var tintColor: UIColor!{
+    public var tintColor: UIColor!{
         didSet{
             self.selectButton.setTitleColor(tintColor, for: .normal);
             self.arrowImageView.image = image!.withRenderingMode(.alwaysTemplate);
@@ -190,16 +183,25 @@ public class DropdownMenu:NSObject
     
     fileprivate var isShowing: Bool = false;
     
-    var selectButton:UIButton!
+    public var selectButton:UIButton!
     
     public var containerView:UIView!
     
-    public init(inViewController viewController:UIViewController, withItems items:[DropdownMenuItem], andSelectedIndex selectedIndex:Int = 0)
+    public init(inViewController viewController:UIViewController)
     {
         self.viewController = viewController;
-        self.dropdownMenuDatasource = DropdownMenuTableViewDataSource(items: items, selectedIndex: selectedIndex)
         super.init();
         self.setup();
+    }
+    
+    public func setItems(items:[DropdownMenuItem], selected:Int)
+    {
+        self.dropdownMenuDatasource.items = items;
+        self.dropdownMenuDatasource.selectedIndex = selected;
+        self.selectButton.setTitle(self.dropdownMenuDatasource.selectedItem.description, for: UIControlState());
+        self.dropdownTableView.reloadData();
+        self.resetTableHeight();
+        
     }
     
     @discardableResult
@@ -235,7 +237,6 @@ public class DropdownMenu:NSObject
         self.dropdownTableView.separatorColor = self.separatorColor;
         
         self.selectButton = UIButton(frame: CGRect.zero)
-        self.selectButton.setTitle(self.dropdownMenuDatasource.selectedItem.description, for: UIControlState());
         self.selectButton.translatesAutoresizingMaskIntoConstraints = false;
         self.arrowImageView = UIImageView();
         self.arrowImageView.translatesAutoresizingMaskIntoConstraints = false;
@@ -261,13 +262,23 @@ public class DropdownMenu:NSObject
         
     }
     
+    func resetTableHeight()
+    {
+        dropdownTableView.constraints.forEach{
+            if $0.firstAttribute == NSLayoutAttribute.height{
+                dropdownTableView.removeConstraint($0);
+            }
+        }
+        dropdownTableView.addConstraint(NSLayoutConstraint(item: dropdownTableView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1.0, constant: CGFloat(self.dropdownMenuDatasource.items.count) * self.dropdownMenuDatasource.cellHeight));
+        
+    }
+    
     func configureDropdownMenuTableViewInController(_ viewController:UIViewController)
     {
         let navigationBar = viewController.navigationController!.navigationBar;
         viewController.navigationController!.view.insertSubview(dropdownTableView, belowSubview: navigationBar);
         self.dropdownTableView.register(DropdownMenuTableViewCell.self, forCellReuseIdentifier: "DropdownMenuTableViewCell")
         viewController.navigationController!.view.addConstraint(NSLayoutConstraint(item: dropdownTableView, attribute: .width, relatedBy: .equal, toItem:  viewController.navigationController!.view, attribute: .width, multiplier: 1.0, constant: 0.0));
-        dropdownTableView.addConstraint(NSLayoutConstraint(item: dropdownTableView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1.0, constant: CGFloat(self.dropdownMenuDatasource.items.count) * self.dropdownMenuDatasource.cellHeight));
         self.closedConstraint = NSLayoutConstraint(item: dropdownTableView, attribute: .bottom, relatedBy: .equal, toItem: viewController.navigationController!.view, attribute: .top, multiplier: 1.0, constant: 0.0);
         self.openedConstraint = NSLayoutConstraint(item: dropdownTableView, attribute: .top, relatedBy: .equal, toItem: navigationBar, attribute: .bottom, multiplier: 1.0, constant: 0.0);
         self.openedConstraint.isActive = false;
